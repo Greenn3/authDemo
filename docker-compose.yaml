@@ -3,13 +3,30 @@ version: '3'
 services:
   keycloak:
     image: quay.io/keycloak/keycloak:24.0
-    command: start-dev
+    command: start
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
-      KC_HTTP_ENABLED: "true"
-      KC_HOSTNAME: 80.211.200.112
-      KC_HOSTNAME_STRICT: "false"
+      KC_DB: dev-mem                    # lub postgres później
+      KC_HOSTNAME: keycloak.example.com  # ← zmienimy niżej
+    expose:
+      - "8080"
+    networks:
+      - keycloak-net
 
+  nginx:
+    image: nginx:latest
     ports:
-      - "8080:8080"
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./certs:/etc/nginx/certs
+    depends_on:
+      - keycloak
+    networks:
+      - keycloak-net
+
+networks:
+  keycloak-net:
+    driver: bridge
