@@ -9,6 +9,7 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: admin
       KC_DB: dev-mem
       KC_HOSTNAME: 80.211.200.112
+      KC_PROXY: edge
     expose:
       - "8080"
     networks:
